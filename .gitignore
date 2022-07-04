@@ -1,0 +1,5 @@
+.DS_Store
+.idea
+dist
+elm-stuff
+node_modules

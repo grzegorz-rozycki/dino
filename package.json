@@ -1,0 +1,16 @@
+{
+  "name": "dino",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "format": "elm-format --yes src/*.elm",
+    "make": "elm make --output=dist/elm.js src/*.elm",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "elm-format": "^0.8.5"
+  }
+}
