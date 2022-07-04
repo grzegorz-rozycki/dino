@@ -91,8 +91,8 @@ type Sprites
 
 
 type alias Model =
-    { dino : Dino
-    , distance : Float
+    { backgroundOffset : Float
+    , dino : Dino
     , speed : Float
     , sprites : Sprites
     }
@@ -101,8 +101,8 @@ type alias Model =
 init : () -> ( Model, Cmd msg )
 init _ =
     ( Model
-        (Dino 20 0 0 0)
         0
+        (Dino 20 0 0 0)
         0
         Loading
     , Cmd.none
@@ -137,13 +137,24 @@ physics delta dino =
 step : Float -> Model -> Model
 step delta model =
     let
+        backgroundOffset =
+            model.backgroundOffset + scrollSpeed / delta
+
         dino =
             model.dino
                 |> gravity delta
                 |> friction delta
                 |> physics delta
     in
-    { model | dino = dino }
+    { model
+        | backgroundOffset =
+            if backgroundOffset >= spriteSheetDefinition.ground.w then
+                0
+
+            else
+                backgroundOffset
+        , dino = dino
+    }
 
 
 applyIfOnGround : Dino -> Dino -> Dino
@@ -269,10 +280,11 @@ translateY y =
     -y + canvasHeight - dinoSize
 
 
-renderBackground : SpriteSheet -> List Renderable
-renderBackground sprites =
+renderBackground : Float -> SpriteSheet -> List Renderable
+renderBackground bgOffset sprites =
     [ shapes [ fill Color.white ] [ rect ( 0, 0 ) canvasWidth canvasHeight ]
-    , texture [] ( toFloat 0, translateY -(dinoSize / 2) ) sprites.ground
+    , texture [] ( -bgOffset, translateY -(dinoSize / 2) ) sprites.ground
+    , texture [] ( -bgOffset + spriteSheetDefinition.ground.w, translateY -(dinoSize / 2) ) sprites.ground
     ]
 
 
@@ -314,7 +326,7 @@ renderWorld model =
                 renderText "Loading"
 
             Loaded sprites ->
-                renderBackground sprites ++ renderDino sprites model.dino
+                renderBackground model.backgroundOffset sprites ++ renderDino sprites model.dino
 
             Failed ->
                 renderText "failed"
