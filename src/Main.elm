@@ -73,7 +73,9 @@ spriteToTexture sprite texture =
 
 spriteSheetDefinition =
     { file = "./img/spritesheet.png"
-    , dino = Sprite 1678 0 (1766 - 1678) 96
+    , cactusSmall1 = Sprite 447 0 33 71
+    , cactusSmall2 = Sprite 481 0 33 71
+    , dino = Sprite 1678 0 88 96
     , ground = Sprite 0 103 2400 24
     }
 
@@ -81,6 +83,8 @@ spriteSheetDefinition =
 type alias SpriteSheet =
     { ground : Texture
     , dino : Texture
+    , cactusSmall1 : Texture
+    , cactusSmall2 : Texture
     }
 
 
@@ -212,6 +216,8 @@ update msg model =
                                 (SpriteSheet
                                     (spriteToTexture spriteSheetDefinition.ground t)
                                     (spriteToTexture spriteSheetDefinition.dino t)
+                                    (spriteToTexture spriteSheetDefinition.cactusSmall1 t)
+                                    (spriteToTexture spriteSheetDefinition.cactusSmall2 t)
                                 )
                       }
                     , Cmd.none
@@ -301,6 +307,13 @@ renderDino sprites dino =
     ]
 
 
+renderEnemies : SpriteSheet -> List Renderable
+renderEnemies sprites =
+    [ texture [] ( 400, translateY 0 ) sprites.cactusSmall1
+    , texture [] ( 500, translateY 0 ) sprites.cactusSmall2
+    ]
+
+
 renderText : String -> List Renderable
 renderText txt =
     [ text
@@ -326,7 +339,7 @@ renderWorld model =
                 renderText "Loading"
 
             Loaded sprites ->
-                renderBackground model.backgroundOffset sprites ++ renderDino sprites model.dino
+                renderBackground model.backgroundOffset sprites ++ renderEnemies sprites ++ renderDino sprites model.dino
 
             Failed ->
                 renderText "failed"
